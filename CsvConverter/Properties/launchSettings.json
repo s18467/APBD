@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CsvToXmlConverter": {
+      "commandName": "Project",
+      "commandLineArgs": "O:\\Projects\\PJATK\\APBD\\CsvConverter\\dane.csv  O:\\Projects\\PJATK\\APBD\\CsvConverter json"
+    }
+  }
+}
