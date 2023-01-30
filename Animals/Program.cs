@@ -7,11 +7,12 @@ namespace Animals
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddControllers();
+            var sc = builder.Services;
+            sc.AddAntiforgery();
+            sc.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            sc.AddEndpointsApiExplorer();
+            sc.AddSwaggerGen();
 
             var app = builder.Build();
 
@@ -20,6 +21,7 @@ namespace Animals
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
