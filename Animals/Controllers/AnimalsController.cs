@@ -9,22 +9,31 @@ namespace Animals.Controllers
     [ApiController]
     public class AnimalsController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly string _connectionString;
 
         public AnimalsController(IConfiguration config)
         {
-            _config = config;
-            _connectionString = _config.GetConnectionString("DefaultConnection");
+            _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
         // GET: api/<AnimalsController>
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string orderBy = "Name")
         {
+            if (string.IsNullOrWhiteSpace(orderBy))
+            {
+                return BadRequest("Wrong param [orderBy].");
+            }
+            orderBy = orderBy.Trim().ToLower();
+            if (orderBy != "name" && orderBy != "description" && orderBy != "category" && orderBy != "area")
+            {
+                return BadRequest("Wrong param [orderBy].");
+            }
             using var con = new SqlConnection(_connectionString);
             con.Open();
-            using var com = new SqlCommand("SELECT * FROM Animal", con);
+            using var com = new SqlCommand($"SELECT * FROM Animal ORDER BY {orderBy} ASC", con);
+            //com.Parameters.Add("@orderBy", SqlDbType.NChar, 50).Value = orderBy;
+
             using var reader = com.ExecuteReader();
 
             // Code to use without class Animal
@@ -36,42 +45,152 @@ namespace Animals.Controllers
 
             // Code to use with Animal class
             var r = reader.Cast<IDataRecord>()
-                .Select(record => new Animal
-                {
-                    IdAnimal = Convert.ToInt32(record["IdAnimal"]),
-                    Name = Convert.ToString(record["Name"]),
-                    Description = Convert.ToString(record["Description"]),
-                    Category = Convert.ToString(record["Category"]),
-                    Area = Convert.ToString(record["Area"])
-                })
-                .ToList();
+                .Select(r => Animal.Convert(r["IdAnimal"], r["Name"], r["Description"], r["Category"], r["Area"])).ToList();
 
             return Ok(r);
         }
 
+        // Dodatkowo napisana z rozpedu, ale zostawiam, aby były wszystkie metody REST.
         // GET api/<AnimalsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{idAnimal:int}")]
+        public IActionResult Get(int idAnimal)
         {
-            return "value";
+            if (idAnimal < 0)
+            {
+                return BadRequest("Wrong param [idAnimal].");
+            }
+
+            using var con = new SqlConnection(_connectionString);
+            var animal = GetAnimal(idAnimal, con);
+            if (animal == null)
+            {
+                return NotFound(idAnimal);
+            }
+
+            return Ok(animal);
         }
+
 
         // POST api/<AnimalsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Animal animal)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (animal.IdAnimal != 0)
+            {
+                return BadRequest("[Id] should be empty.");
+            }
+            using var con = new SqlConnection(_connectionString);
+            using var com = new SqlCommand("INSERT INTO Animal (Name, Description, Category, Area) VALUES (@Name, @Description, @Category, @Area)", con);
+            com.Parameters.Add("@Name", SqlDbType.NVarChar, 200).Value = animal.Name;
+            com.Parameters.Add("@Description", SqlDbType.NVarChar, 200).Value = animal.Description;
+            com.Parameters.Add("@Category", SqlDbType.NVarChar, 200).Value = animal.Category;
+            com.Parameters.Add("@Area", SqlDbType.NVarChar, 200).Value = animal.Area;
+
+            con.Open();
+            var r = com.ExecuteNonQuery();
+            if (r < 0)
+            {
+                return Problem("Database returned a negative value: " + r);
+            }
+
+            return Created("api/Animals", animal);
         }
 
         // PUT api/<AnimalsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{idAnimal:int}")]
+        public IActionResult Put(int idAnimal, [FromBody] Animal animal)
         {
+            if (idAnimal < 0)
+            {
+                return BadRequest("Wrong param [idAnimal].");
+            }
+
+            using var con = new SqlConnection(_connectionString);
+            var dbAnimal = GetAnimal(idAnimal, con);
+            if (dbAnimal == null)
+            {
+                return NotFound(idAnimal);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (animal.IdAnimal != idAnimal)
+            {
+                return BadRequest("[Id] should be the same as in the URL.");
+            }
+
+            using var com = new SqlCommand("UPDATE Animal SET Name = @Name, Description = @Description, Category = @Category, Area = @Area WHERE IdAnimal = @IdAnimal", con);
+            com.Parameters.Add("@IdAnimal", SqlDbType.Int).Value = idAnimal;
+            com.Parameters.Add("@Name", SqlDbType.NVarChar, 200).Value = animal.Name;
+            com.Parameters.Add("@Description", SqlDbType.NVarChar, 200).Value = animal.Description;
+            com.Parameters.Add("@Category", SqlDbType.NVarChar, 200).Value = animal.Category;
+            com.Parameters.Add("@Area", SqlDbType.NVarChar, 200).Value = animal.Area;
+
+            var r = com.ExecuteNonQuery();
+            if (r < 0)
+            {
+                return Problem("Database returned an error: " + r);
+            }
+
+            return Accepted(animal);
         }
 
         // DELETE api/<AnimalsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{idAnimal}")]
+        public IActionResult Delete(int idAnimal)
         {
+            if (idAnimal < 0)
+            {
+                return BadRequest("Wrong param [idAnimal].");
+            }
+
+            using var con = new SqlConnection(_connectionString);
+            var dbAnimal = GetAnimal(idAnimal, con);
+            if (dbAnimal == null)
+            {
+                return NotFound(idAnimal);
+            }
+            var com = new SqlCommand("DELETE FROM Animal WHERE IdAnimal = @IdAnimal", con);
+            com.Parameters.Add("@IdAnimal", SqlDbType.Int).Value = idAnimal;
+
+            var r = com.ExecuteNonQuery();
+            if (r < 0)
+            {
+                return Problem("Database returned an error: " + r);
+            }
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Uses created connection to get animal from database.
+        /// </summary>
+        /// <param name="idAnimal"></param>
+        /// <param name="con"></param>
+        /// <returns>object if found, null otherwise</returns>
+        private Animal? GetAnimal(int idAnimal, SqlConnection con)
+        {
+            using var com = new SqlCommand("SELECT * FROM Animal WHERE IdAnimal = @IdAnimal", con);
+            com.Parameters.Add("@IdAnimal", SqlDbType.Int).Value = idAnimal;
+
+            con.Open();
+            using var reader = com.ExecuteReader();
+            if (!reader.Read())
+            {
+                {
+                    return null;
+                }
+            }
+            var animal = Animal.Convert(reader["IdAnimal"], reader["Name"], reader["Description"], reader["Category"],
+                reader["Area"]);
+
+            return animal;
         }
     }
 }
