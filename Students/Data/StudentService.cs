@@ -13,5 +13,20 @@ namespace Students.Data
         {
             return Task.FromResult(_students.ToArray());
         }
+
+        public static async Task<Student> GetStudent(int id)
+        {
+            return _students.First(s => s.Id == id);
+        }
+
+        public Task DeleteStudentAsync(int id)
+        {
+            var student = _students.FirstOrDefault(s => s.Id == id);
+            if (student != null)
+            {
+                _students.Remove(student);
+            }
+            return Task.CompletedTask;
+        }
     }
 }

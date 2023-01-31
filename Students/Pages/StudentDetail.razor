@@ -1,0 +1,44 @@
+﻿@page "/students/{Id:int}"
+@using Students.Data
+
+<h3>Student's' Details</h3>
+<hr />
+
+<div class="form-group">
+    <label for="firstName">First Name</label>
+    <input type="text" class="form-control" id="firstName" disabled="disabled" bind="student.FirstName" />
+</div>
+
+<div class="form-group">
+    <label for="lastName">Last Name</label>
+    <input type="text" class="form-control" id="lastName" disabled="disabled" bind="student.LastName" />
+</div>
+
+<div class="form-group">
+    <label for="dateOfBirth">Date of Birth</label>
+    <input type="text" class="form-control" id="dateOfBirth" disabled="disabled" bind="student.DateOfBirth" />
+</div>
+
+<div class="form-group">
+    <label for="faculty">Faculty</label>
+    <input type="text" class="form-control" id="faculty" disabled="disabled" bind="student.Faculty" />
+</div>
+
+<div class="form-group">
+    <label for="avatar">Avatar</label>
+    <img src="@student.Avatar" />
+</div>
+
+@code{
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Student student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        student = await StudentService.GetStudent(Id);
+    }
+
+}
