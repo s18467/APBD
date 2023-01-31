@@ -4,8 +4,15 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>321f5add-f370-4d9e-ac85-dfa9ae434e2a</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="IsoDateTimeAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Attributes\ValidDateTimeAttribute.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
