@@ -1,7 +1,6 @@
 ﻿using LinqTutorials.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LinqTutorials
 {
@@ -330,7 +329,7 @@ namespace LinqTutorials
         //Put your extension methods here
         public static IEnumerable<Emp> GetEmpsWithSubordinates(this IEnumerable<Emp> emps)
         {
-      
+            return null;
         }
 
     }

@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse", "Warehouse\Ware
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqTutorials", "LinqTutorials\LinqTutorials.csproj", "{420AC249-3244-460A-B5AF-C188EFEB106E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLinqTutorials", "TestLinqTutorials\TestLinqTutorials.csproj", "{0EC4D6E6-227B-43E9-AD87-EE823F482811}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{420AC249-3244-460A-B5AF-C188EFEB106E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{420AC249-3244-460A-B5AF-C188EFEB106E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{420AC249-3244-460A-B5AF-C188EFEB106E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC4D6E6-227B-43E9-AD87-EE823F482811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC4D6E6-227B-43E9-AD87-EE823F482811}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC4D6E6-227B-43E9-AD87-EE823F482811}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC4D6E6-227B-43E9-AD87-EE823F482811}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +86,7 @@ Global
 		{ED703CCD-683D-432D-9444-164D6DDF196B} = {77DC642D-49BE-41D9-B195-2EEA31641770}
 		{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA} = {E0952E54-B5ED-404C-BA78-2B1C01BFD677}
 		{420AC249-3244-460A-B5AF-C188EFEB106E} = {73F346B3-E565-44E4-84E6-24E5DA49E0A8}
+		{0EC4D6E6-227B-43E9-AD87-EE823F482811} = {73F346B3-E565-44E4-84E6-24E5DA49E0A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D9105DC-5FDD-4891-9D6F-E1F0A0561A68}
