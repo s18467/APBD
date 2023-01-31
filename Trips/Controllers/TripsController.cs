@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Trips.Models;
+using Trips.Models.Dtos;
 
 namespace Trips.Controllers
 {
@@ -15,7 +16,7 @@ namespace Trips.Controllers
             _context = context;
         }
 
-        // GET: api/Trips
+        // GET: api/trips
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Trip>>> GetTrips()
         {
@@ -23,7 +24,7 @@ namespace Trips.Controllers
             return Ok(list);
         }
 
-        // GET: api/Trips/5
+        // GET: api/trips/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Trip>> GetTrip(int id)
         {
@@ -37,67 +38,61 @@ namespace Trips.Controllers
             return Ok(trip);
         }
 
-        // PUT: api/Trips/5
+        // POST: api/trips/{idTrip}/clients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTrip(int id, Trip trip)
+        [HttpPost("{idTrip}/clients")]
+        public async Task<ActionResult<Trip>> PostTrip(int idTrip, [FromBody] NewClientTripDto tripDto)
         {
-            if (id != trip.IdTrip)
+            if (idTrip < 1)
             {
-                return BadRequest();
+                return BadRequest("Invalid trip id");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (idTrip != tripDto.IdTrip)
+            {
+                return BadRequest("Trip id in url and in body do not match");
             }
 
-            _context.Entry(trip).State = EntityState.Modified;
-
-            try
+            var trip = await _context.Trips.FindAsync(tripDto.IdTrip);
+            if (trip == null)
             {
+                return NotFound($"Trip {tripDto.IdTrip} does not exist");
+            }
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Pesel == tripDto.Pesel);
+            if (client == null)
+            {
+                client = new Client
+                {
+                    FirstName = tripDto.FirstName,
+                    LastName = tripDto.LastName,
+                    Email = tripDto.Email,
+                    Telephone = tripDto.Telephone,
+                    Pesel = tripDto.Pesel
+                };
+                await _context.Clients.AddAsync(client);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!TripExists(id))
+                if (await _context.ClientTrips.AnyAsync(ct => ct.IdClient == client.IdClient && ct.IdTrip == tripDto.IdTrip))
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    return BadRequest("Client already has this trip");
                 }
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Trips
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Trip>> PostTrip(Trip trip)
-        {
-            _context.Trips.Add(trip);
+            var clientTrip = new ClientTrip
+            {
+                IdClient = client.IdClient,
+                IdTrip = tripDto.IdTrip,
+                RegisteredAt = DateTime.Now,
+                PaymentDate = tripDto.PaymentDate
+            };
+            await _context.ClientTrips.AddAsync(clientTrip);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTrip", new { id = trip.IdTrip }, trip);
-        }
-
-        // DELETE: api/Trips/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTrip(int id)
-        {
-            var trip = await _context.Trips.FindAsync(id);
-            if (trip == null)
-            {
-                return NotFound();
-            }
-
-            _context.Trips.Remove(trip);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool TripExists(int id)
-        {
-            return _context.Trips.Any(e => e.IdTrip == id);
         }
     }
 }

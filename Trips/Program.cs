@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 using Trips.Models;
 
 namespace Trips
@@ -16,7 +15,7 @@ namespace Trips
             sc.AddDbContext<DbTripsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             sc.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             sc.AddEndpointsApiExplorer();
