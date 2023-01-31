@@ -35,7 +35,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe12", "Exe12", "{C8F487FC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animals", "Animals\Animals.csproj", "{ED703CCD-683D-432D-9444-164D6DDF196B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse", "Warehouse\Warehouse.csproj", "{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse", "Warehouse\Warehouse.csproj", "{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqTutorials", "LinqTutorials\LinqTutorials.csproj", "{420AC249-3244-460A-B5AF-C188EFEB106E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{420AC249-3244-460A-B5AF-C188EFEB106E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{420AC249-3244-460A-B5AF-C188EFEB106E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{420AC249-3244-460A-B5AF-C188EFEB106E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{420AC249-3244-460A-B5AF-C188EFEB106E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{FC4ACEEE-CFCF-43AC-A056-F6F7197A424A} = {8C689B1C-E237-407B-8C03-F407D61B3694}
 		{ED703CCD-683D-432D-9444-164D6DDF196B} = {77DC642D-49BE-41D9-B195-2EEA31641770}
 		{3B4F1A5D-CF22-483E-8A3C-9EE8295851EA} = {E0952E54-B5ED-404C-BA78-2B1C01BFD677}
+		{420AC249-3244-460A-B5AF-C188EFEB106E} = {73F346B3-E565-44E4-84E6-24E5DA49E0A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D9105DC-5FDD-4891-9D6F-E1F0A0561A68}
