@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Trips
 {
     public class Program
@@ -8,10 +10,14 @@ namespace Trips
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            var sc = builder.Services;
+            sc.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            sc.AddEndpointsApiExplorer();
+            sc.AddSwaggerGen();
 
             var app = builder.Build();
 
