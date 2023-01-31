@@ -1,15 +1,16 @@
 ﻿@page "/fetchdata"
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Studenci</PageTitle>
 
 @using Students.Data
-@inject WeatherForecastService ForecastService
+@inject StudentService StudentService
 
-<h1>Weather forecast</h1>
+<h1>Studenci</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<p><u>Lista w tabeli</u></p>
+<p style="color: crimson;font-size:30px">Kliknij na <u><b>nagłówek</b></u> kolumny aby posortować rosnąco lub malejąco.</p>
 
-@if (forecasts == null)
+@if (studentsCoreList == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,20 +19,24 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>ID</th>
+                <th><a  @onclick="SortByFirstName">First Name</a></th>
+                <th><a  @onclick="SortByLastName">Last Name</a></th>
+                <!--<th>Email</th>-->
+                <th><a  @onclick="SortByBirthDate">Birth Date</a></th>
+                <th><a  @onclick="SortByStudies">Studies</a></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var student in sortedStudents)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@student.Id</td>
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <!--<td>atstudent.Email</td>-->
+                    <td>@student.BirthDate.ToShortDateString()</td>
+                    <td>@student.Studies</td>
                 </tr>
             }
         </tbody>
@@ -39,10 +44,77 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private Student[] studentsCoreList;
+    private Student[] sortedStudents;
+    private string sortExpression;
+    private bool sortAscending = true;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        studentsCoreList = await StudentService.GetStudents();
+        sortedStudents = studentsCoreList.OrderBy(x => x.LastName).ToArray();
+    }
+
+    private void SortStudents(Func<Student, string> selector)
+    {
+        sortedStudents = sortAscending ? studentsCoreList.OrderBy(selector).ToArray() : studentsCoreList.OrderByDescending(selector).ToArray();
+    }
+
+    private void SortByLastName()
+    {
+        if (sortExpression == "LastName")
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortAscending = true;
+            sortExpression = "LastName";
+        }
+
+        SortStudents(x => x.LastName);
+    }
+    
+    private void SortByFirstName()
+    {
+        if (sortExpression == "FirstName")
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortAscending = true;
+            sortExpression = "FirstName";
+        }
+
+        SortStudents(x => x.FirstName);
+    }
+
+    private void SortByBirthDate()
+    {
+        if (sortExpression == "BirthDate")
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortAscending = true;
+            sortExpression = "BirthDate";
+        }
+        SortStudents(x => x.BirthDate.ToShortDateString());
+    }
+
+    private void SortByStudies()
+    {
+        if (sortExpression == "Studies")
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortAscending = true;
+            sortExpression = "Studies";
+        }
+        SortStudents(x => x.Studies);
     }
 }
