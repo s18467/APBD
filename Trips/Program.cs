@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Trips.Models;
 
 namespace Trips
 {
@@ -11,6 +13,7 @@ namespace Trips
             // Add services to the container.
 
             var sc = builder.Services;
+            sc.AddDbContext<DbTripsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             sc.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
