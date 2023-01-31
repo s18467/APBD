@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace MediDoc
 {
     public class Program
@@ -9,6 +11,10 @@ namespace MediDoc
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddDbContext<MediContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
