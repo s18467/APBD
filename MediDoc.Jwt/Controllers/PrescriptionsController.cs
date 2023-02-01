@@ -1,5 +1,6 @@
 ﻿using MediDoc.Jwt.Dtos;
 using MediDoc.Jwt.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace MediDoc.Jwt.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PrescriptionsController : ControllerBase
     {
         private readonly MediContext _context;

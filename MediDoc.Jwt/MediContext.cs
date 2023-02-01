@@ -1,5 +1,7 @@
 ﻿using MediDoc.Jwt.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace MediDoc.Jwt;
 
@@ -10,6 +12,7 @@ public class MediContext : DbContext
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Prescription> Prescriptions { get; set; }
     public DbSet<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
+    public DbSet<Account> Accounts { get; set; }
 
     public MediContext()
     {
@@ -59,10 +62,45 @@ public class MediContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Prescription_Medicament_Prescription");
         });
+
+        modelBuilder.Entity<Account>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Account_pk");
+        });
     }
 
     private void Seed(ModelBuilder mb)
     {
+        #region Account
+        var password = "mzalpqw";
+        var salt = new byte[128 / 8];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(salt);
+        }
+        Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+
+        var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA1,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8));
+
+        var saltBase64 = Convert.ToBase64String(salt);
+
+        var user = new Account()
+        {
+            Id = 1,
+            Username = "Admin",
+            Email = "admin@test.pl",
+            Password = hashed,
+            Salt = saltBase64,
+            RefreshToken = null,
+            RefreshTokenExp = null
+        };
+        mb.Entity<Account>().HasData(user);
+        #endregion
         #region Doctor
         mb.Entity<Doctor>().HasData(
             new Doctor
@@ -88,7 +126,6 @@ public class MediContext : DbContext
             }
         );
         #endregion
-
         #region Patient
         mb.Entity<Patient>().HasData(
             new Patient
