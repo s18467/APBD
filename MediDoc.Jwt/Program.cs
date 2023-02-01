@@ -1,3 +1,4 @@
+using MediDoc.Jwt.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,7 @@ namespace MediDoc.Jwt
             // Add services to the container.
 
             var sc = builder.Services;
+
             sc.AddControllers();
 
             sc.AddDbContext<MediContext>(options =>
@@ -50,6 +52,8 @@ namespace MediDoc.Jwt
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseFileMediLogger("log.txt");
 
             app.UseHttpsRedirection();
 
