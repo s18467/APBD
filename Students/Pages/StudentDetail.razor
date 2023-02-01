@@ -1,44 +1,52 @@
 ﻿@page "/students/{Id:int}"
+
 @using Students.Data
+
+<PageTitle>Dane Studenta</PageTitle>
+
 
 <h3>Student's' Details</h3>
 <hr />
 
-<div class="form-group">
-    <label for="firstName">First Name</label>
-    <input type="text" class="form-control" id="firstName" disabled="disabled" bind="student.FirstName" />
-</div>
+<EditForm Model="@student" >
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-<div class="form-group">
-    <label for="lastName">Last Name</label>
-    <input type="text" class="form-control" id="lastName" disabled="disabled" bind="student.LastName" />
-</div>
+    <div class="align-items-center">
+        <div class="input-group">
+            <InputText class="form-control mb-2" id="firstname" @bind-Value="student.FirstName" />
+        </div>
 
-<div class="form-group">
-    <label for="dateOfBirth">Date of Birth</label>
-    <input type="text" class="form-control" id="dateOfBirth" disabled="disabled" bind="student.DateOfBirth" />
-</div>
+        <div class="input-group">
+            <InputText class="form-control mb-2" id="lastname" @bind-Value="student.LastName" />
+        </div>
 
-<div class="form-group">
-    <label for="faculty">Faculty</label>
-    <input type="text" class="form-control" id="faculty" disabled="disabled" bind="student.Faculty" />
-</div>
+        <div class="input-group">
+            <InputDate class="form-control" @bind-Value="student.BirthDate" />
+        </div>
 
-<div class="form-group">
-    <label for="avatar">Avatar</label>
-    <img src="@student.Avatar" />
-</div>
+        <div class="input-group">
+            <img class="form-control" src="@student.Avatar" alt="avatar"/>
+        </div>
+
+        <div class="input-group">
+            <InputText class="form-control" @bind-Value="student.Studies" />
+        </div>
+    </div>
+    
+    <button class="form-control row-auto" type="submit">Zapisz</button>
+</EditForm>
 
 @code{
 
     [Parameter]
     public int Id { get; set; }
 
-    private Student student;
+    public Student student;
 
     protected override async Task OnInitializedAsync()
     {
-        student = await StudentService.GetStudent(Id);
+        student =  StudentService.GetStudent(Id);
     }
 
 }
