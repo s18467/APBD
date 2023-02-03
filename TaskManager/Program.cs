@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace TaskManager
 {
@@ -16,7 +17,8 @@ namespace TaskManager
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-            sc.AddControllers();
+            sc.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             sc.AddEndpointsApiExplorer();
             sc.AddSwaggerGen();
