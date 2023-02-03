@@ -4,24 +4,17 @@ using Task = TaskManager.Models.Task;
 
 namespace TaskManager;
 
-public partial class TaskMgrDbContext : DbContext
+public class TaskMgrDbContext : DbContext
 {
-    public TaskMgrDbContext()
-    {
-    }
-
     public TaskMgrDbContext(DbContextOptions<TaskMgrDbContext> options)
         : base(options)
     {
     }
 
-    public virtual DbSet<Project> Projects { get; set; }
-
-    public virtual DbSet<Task> Tasks { get; set; }
-
-    public virtual DbSet<TaskType> TaskTypes { get; set; }
-
-    public virtual DbSet<TeamMember> TeamMembers { get; set; }
+    public virtual DbSet<Project> Projects { get; set; } = null!;
+    public virtual DbSet<Task> Tasks { get; set; } = null!;
+    public virtual DbSet<TaskType> TaskTypes { get; set; } = null!;
+    public virtual DbSet<TeamMember> TeamMembers { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("name=DefaultConnection");
