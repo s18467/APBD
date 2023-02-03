@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace TaskManager
 {
     public class Program
@@ -8,16 +10,23 @@ namespace TaskManager
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            var sc = builder.Services;
+
+            sc.AddDbContext<TaskMgrDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+            sc.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            sc.AddEndpointsApiExplorer();
+            sc.AddSwaggerGen();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
