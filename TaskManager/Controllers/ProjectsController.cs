@@ -25,7 +25,7 @@ namespace TaskManager.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectDto>> GetProject(int id)
         {
             if (id < 1)
             {
@@ -44,10 +44,12 @@ namespace TaskManager.Controllers
             {
                 Id = id,
                 Name = project.Name,
-                Tasks = project.Tasks.Select(t => new TaskDto
+                Tasks = project.Tasks.OrderByDescending(t => t.Deadline).Select(t => new SimpleTaskDto
                 {
                     Id = t.IdTask,
                     Name = t.Name,
+                    Description = t.Description,
+                    Deadline = t.Deadline,
                     TaskType = new TaskTypeDto
                     {
                         IdTaskType = t.IdTaskType,
@@ -56,7 +58,7 @@ namespace TaskManager.Controllers
                 }).ToList()
             };
 
-            return project;
+            return dto;
         }
 
         private bool ProjectExists(int id)
